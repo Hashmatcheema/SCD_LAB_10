@@ -4,6 +4,34 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
+                script {
+                    // Get build information
+                    def buildNumber = env.BUILD_NUMBER
+                    def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss")
+                    def buildCause = currentBuild.getBuildCauses('hudson.model.Cause$RemoteCause')
+                    def gitHubCause = currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause')
+                    
+                    // Check if triggered by GitHub webhook
+                    def isWebhookTrigger = false
+                    if (gitHubCause && gitHubCause.size() > 0) {
+                        isWebhookTrigger = true
+                    } else if (buildCause && buildCause.size() > 0) {
+                        isWebhookTrigger = true
+                    } else if (env.GIT_BRANCH && env.BUILD_CAUSE?.contains('GitHub')) {
+                        isWebhookTrigger = true
+                    }
+                    
+                    // Display build information
+                    echo "=========================================="
+                    echo "Build #${buildNumber} triggered at ${timestamp}"
+                    if (isWebhookTrigger) {
+                        echo "Triggered by GitHub Webhook"
+                    } else {
+                        def user = env.BUILD_USER ?: env.CHANGE_AUTHOR ?: 'user'
+                        echo "Triggered manually by ${user}"
+                    }
+                    echo "=========================================="
+                }
                 checkout scm
             }
         }
