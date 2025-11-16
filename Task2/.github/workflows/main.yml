@@ -1,0 +1,25 @@
+name: CI - Temperature Converter App Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for Task2
+        run: |
+          cd Task2
+
+      - name: Run Temperature Converter tests
+        run: |
+          cd Task2
+          npm test

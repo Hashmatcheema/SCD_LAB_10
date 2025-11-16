@@ -1,0 +1,18 @@
+{
+  "name": "temperature-converter",
+  "version": "1.0.0",
+  "description": "Temperature converter application for Celsius to Fahrenheit conversion",
+  "main": "converter.js",
+  "scripts": {
+    "start": "node converter.js",
+    "test": "node test.js",
+    "lint": "eslint *.js || exit 0"
+  },
+  "keywords": ["temperature", "converter", "celsius", "fahrenheit"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
+

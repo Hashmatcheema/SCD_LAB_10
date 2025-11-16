@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Test Meeting",
+    "description": "Project discussion",
+    "date": "2025-03-15",
+    "time": "10:00 AM",
+    "category": "Meetings",
+    "userId": 1
+  },
+  {
+    "id": 2,
+    "name": "Test Meeting",
+    "description": "Project discussion",
+    "date": "2025-03-15",
+    "time": "10:00 AM",
+    "category": "Meetings",
+    "userId": 1
+  }
+]

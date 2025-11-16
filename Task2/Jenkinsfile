@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo 'Cloning GitHub repository...'
+                checkout scm
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                dir('Task2') {
+                    bat 'npm install'
+                }
+            }
+        }
+        
+        stage('Run Linting') {
+            steps {
+                echo 'Running linting...'
+                dir('Task2') {
+                    bat 'npm run lint'
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                echo 'Running tests...'
+                dir('Task2') {
+                    bat 'npm test'
+                }
+            }
+        }
+        
+        stage('Archive Build Artifacts') {
+            steps {
+                echo 'Archiving build output...'
+                script {
+                    // Create build output directory
+                    bat '''
+                        if not exist build mkdir build
+                        cd Task2
+                        copy converter.js ..\\build\\
+                        copy test.js ..\\build\\
+                        copy package.json ..\\build\\
+                        copy README.md ..\\build\\
+                        cd ..
+                    '''
+                    // Create zip file using PowerShell
+                    powershell '''
+                        $buildDir = "build"
+                        $zipFile = "build-artifacts.zip"
+                        if (Test-Path $zipFile) { Remove-Item $zipFile }
+                        Compress-Archive -Path $buildDir\\* -DestinationPath $zipFile -Force
+                        Write-Host "Created archive: $zipFile"
+                    '''
+                }
+                // Archive the zip file as Jenkins artifact
+                archiveArtifacts artifacts: 'build-artifacts.zip', fingerprint: true
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Build and tests successful!'
+            echo 'Email sent to team@example.com - Build Status: SUCCESS'
+            echo 'Subject: Jenkins Build Success - NodeApp-CI-Extended'
+            echo 'Body: The build completed successfully. All tests passed.'
+        }
+        failure {
+            echo 'Build failed or tests failed!'
+            echo 'Email sent to team@example.com - Build Status: FAILURE'
+            echo 'Subject: Jenkins Build Failure - NodeApp-CI-Extended'
+            echo 'Body: The build failed. Please check the console output for details.'
+        }
+        always {
+            echo 'Build process completed.'
+        }
+    }
+}
+
