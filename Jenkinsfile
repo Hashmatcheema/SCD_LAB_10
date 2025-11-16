@@ -6,6 +6,10 @@ pipeline {
             steps {
                 script {
                     def branchName = env.BRANCH_NAME ?: env.GIT_BRANCH?.split('/').last() ?: 'unknown'
+                    // Handle "default" as main branch
+                    if (branchName == 'default') {
+                        branchName = 'main'
+                    }
                     echo "=========================================="
                     echo "Checking out branch: ${branchName}"
                     echo "Build #${env.BUILD_NUMBER}"
@@ -49,6 +53,10 @@ pipeline {
             steps {
                 script {
                     def branchName = env.BRANCH_NAME ?: env.GIT_BRANCH?.split('/').last() ?: 'unknown'
+                    // Handle "default" as main branch (Jenkins multi-branch sometimes uses this)
+                    if (branchName == 'default') {
+                        branchName = 'main'
+                    }
                     
                     if (branchName == 'main') {
                         echo '=========================================='
@@ -102,6 +110,9 @@ pipeline {
         success {
             script {
                 def branchName = env.BRANCH_NAME ?: env.GIT_BRANCH?.split('/').last() ?: 'unknown'
+                if (branchName == 'default') {
+                    branchName = 'main'
+                }
                 def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss")
                 echo "=========================================="
                 echo "Build #${env.BUILD_NUMBER} on branch ${branchName} completed successfully at ${timestamp}"
@@ -111,6 +122,9 @@ pipeline {
         failure {
             script {
                 def branchName = env.BRANCH_NAME ?: env.GIT_BRANCH?.split('/').last() ?: 'unknown'
+                if (branchName == 'default') {
+                    branchName = 'main'
+                }
                 echo "Build #${env.BUILD_NUMBER} on branch ${branchName} failed!"
             }
         }
